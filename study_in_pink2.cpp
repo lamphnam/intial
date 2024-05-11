@@ -356,12 +356,11 @@ Configuration::Configuration(const string & filepath) {
                         int c = stoi(c_str);
                         tempWalls[index] = Position(r, c);
                         index++;
-                    } catch (std::invalid_argument& e) {
-                        cerr << "Error: Invalid wall position (" << r_str << "," << c_str << ")\n";
-                    }
+                    } catch (invalid_argument & e){
+                        // do nothing
                 }
             }    
-            
+            }
             if (key == "ARRAY_WALLS"){
                 arr_walls = tempWalls;
                 num_walls = wall_count;
