@@ -349,11 +349,17 @@ Configuration::Configuration(const string & filepath) {
             while (getline(wallStream, wall, ';')){
                 size_t commaPos = wall.find(',');
                 if (commaPos != string::npos){
-                    int x = stoi(wall.substr(0, commaPos));
-                    int y = stoi(wall.substr(commaPos + 1));
-                    tempWalls[index++] = Position(x, y);
-                    
-            }
+                    string r_str = wall.substr(1, commaPos - 1);
+                    string c_str = wall.substr(commaPos + 1);
+                    try {
+                        int r = stoi(r_str);
+                        int c = stoi(c_str);
+                        tempWalls[index] = Position(r, c);
+                        index++;
+                    } catch (std::invalid_argument& e) {
+                        cerr << "Error: Invalid wall position (" << r_str << "," << c_str << ")\n";
+                    }
+                }
             }    
             
             if (key == "ARRAY_WALLS"){
