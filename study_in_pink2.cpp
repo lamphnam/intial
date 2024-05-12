@@ -50,15 +50,31 @@ ElementType MapElement::getType() const {
         }
         delete[] map;
     }
+    bool Map::isValid(const Position & pos, MovingObject * mv_obj) const {
+        if(pos.getRow() < 0 || pos.getRow() >= num_rows || pos.getCol() < 0 || pos.getCol() >= num_cols){
+            return false;
+        }
+        if(map[pos.getRow()][pos.getCol()]->getType() == ElementType::WALL){
+            return false;
+        }
+        if(map[pos.getRow()][pos.getCol()]->getType() == ElementType::FAKE_WALL){
+            FakeWall * fake_wall = dynamic_cast<FakeWall*>(map[pos.getRow()][pos.getCol()]);
+            if(mv_obj->getName() == "Sherlock"){
+                Sherlock * sherlock = dynamic_cast<Sherlock*>(mv_obj);
+                if(sherlock->getExp() < fake_wall->getReqExp(pos.getRow(), pos.getCol())){
+                    return false;
+                }
+            }else if(mv_obj->getName() == "Watson"){
+                Watson * watson = dynamic_cast<Watson*>(mv_obj);
+                if(watson->getExp() < fake_wall->getReqExp(pos.getRow(), pos.getCol())){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-//MovingObject
-    /*MovingObject(int index, const Position pos, Map * map, const string & name="");
-    virtual ~MovingObject();
-    virtual Position getNextPosition() = 0;
-    Position getCurrentPosition() const;
-    virtual void move() = 0;
-    virtual string str() const = 0;
-*/
+
 MovingObject::MovingObject(int index, const Position pos, Map * map, const string & name) : index(index), pos(pos), map(map), name(name) {
     if(name == ""){
         this->name = "MovingObject";
@@ -149,7 +165,9 @@ int Sherlock :: checkEXP(int init_exp){
 string Sherlock::getName(){
     return "Sherlock";
 }
-
+int Sherlock::getExp(){
+    return exp;
+}
 void Sherlock::move() {
     Position nextPosition = getNextPosition();
     if(!nextPosition.isEqual(Position::npos)) {
@@ -182,6 +200,9 @@ int Watson :: checkEXP(int init_exp){
         init_exp = 500;
     }
     return init_exp;
+}
+int Watson::getExp(){
+    return exp;
 }
 string Watson::getName(){
     return "Watson";
@@ -410,15 +431,22 @@ string Configuration::str() const {
     ss << "MAP_NUM_COLS=" << map_num_cols << "\n";
     ss << "MAX_NUM_MOVING_OBJECTS=" << max_num_moving_objects << "\n";
     ss << "NUM_WALLS=" << num_walls << "\n";
+    //ARRAY_WALLS=[(0,1);(2,2);(7,0);(6,1);(7,1);(1,2);(3,0);(6,2);(0,2);(11,0)]
     ss << "ARRAY_WALLS=[";
-    for (int i = 0; arr_walls && i < num_walls; ++i) {
-        ss << "(" << arr_walls[i].getRow() << "," << arr_walls[i].getCol() << ");";
-    }
+    for (int i = 0; arr_walls && i < num_walls; i++) {
+        ss << "(" << arr_walls[i].getRow() << "," << arr_walls[i].getCol() << ")";
+        if (i < num_walls - 1) { 
+        ss << ";";
+        }
+    }    
     ss << "]\n";
     ss << "NUM_FAKE_WALLS=" << num_fake_walls << "\n";
     ss << "ARRAY_FAKE_WALLS=[";
-    for (int i = 0; arr_fake_walls && i < num_fake_walls; ++i) {
-        ss << "(" << arr_fake_walls[i].getRow() << "," << arr_fake_walls[i].getCol() << ");";
+    for (int i = 0; arr_fake_walls && i < num_fake_walls; i++) {
+        ss << "(" << arr_fake_walls[i].getRow() << "," << arr_fake_walls[i].getCol() << ")";
+        if (i < num_fake_walls - 1) { 
+        ss << ";";
+        }
     }
     ss << "]\n";
     ss << "SHERLOCK_MOVING_RULE=" << sherlock_moving_rule << "\n";

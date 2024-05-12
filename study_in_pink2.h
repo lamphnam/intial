@@ -121,6 +121,7 @@ public:
     Position getCurrentPosition() const;
     virtual void move() = 0;
     virtual string str() const = 0;
+    virtual string getName() = 0;
 };
 
 class Sherlock : public MovingObject  {
@@ -137,6 +138,7 @@ public:
     Sherlock(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
     int checkHP(int init_hp);
     int checkEXP(int init_exp);
+    int getExp();
     Position getNextPosition();
     Position getCurrentPosition();
     string getName();
@@ -161,6 +163,7 @@ public:
     Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
     int checkHP(int init_hp);
     int checkEXP(int init_exp);
+    int getExp();
     Position getNextPosition();
     Position getCurrentPosition();
     string getName();
