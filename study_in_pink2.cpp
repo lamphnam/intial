@@ -345,7 +345,6 @@ Configuration::Configuration(const string & filepath) {
             wallStream.str(cleaned_walls);
             Position * tempWalls = new Position[wall_count];
             int index = 0;
-            //Right output is ARRAY_WALLS=[(0,0);(0,3);(0,3);(0,0);(0,0);(0,4);(0,4);(0,4)]
             while (getline(wallStream, wall, ';')){
                 size_t commaPos = wall.find(',');
                 if (commaPos != string::npos){
@@ -361,7 +360,6 @@ Configuration::Configuration(const string & filepath) {
                     }
                 }
             }
-            //My output is ARRAY_WALLS=[(0,3);(0,3);(0,0);(0,0);(0,4);(0,4);(0,4);(0,0);] not ARRAY_WALLS=[(0,0);(0,3);(0,3);(0,0);(0,0);(0,4);(0,4);(0,4)]
             if (key == "ARRAY_WALLS"){
                 arr_walls = tempWalls;
                 num_walls = wall_count;
