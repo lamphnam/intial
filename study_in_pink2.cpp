@@ -345,12 +345,12 @@ Configuration::Configuration(const string & filepath) {
             wallStream.str(cleaned_walls);
             Position * tempWalls = new Position[wall_count];
             int index = 0;
-            
+            //Right output is ARRAY_WALLS=[(0,0);(0,3);(0,3);(0,0);(0,0);(0,4);(0,4);(0,4)]
             while (getline(wallStream, wall, ';')){
                 size_t commaPos = wall.find(',');
                 if (commaPos != string::npos){
-                    string r_str = wall.substr(1, commaPos - 1);
-                    string c_str = wall.substr(commaPos + 1);
+                    string r_str = wall.substr(1, commaPos - 1); 
+                    string c_str = wall.substr(commaPos + 1, wall.size() - commaPos - 2); 
                     try {
                         int r = stoi(r_str);
                         int c = stoi(c_str);
@@ -358,9 +358,10 @@ Configuration::Configuration(const string & filepath) {
                         index++;
                     } catch (invalid_argument & e){
                         // do nothing
+                    }
                 }
-            }    
             }
+            //My output is ARRAY_WALLS=[(0,3);(0,3);(0,0);(0,0);(0,4);(0,4);(0,4);(0,0);] not ARRAY_WALLS=[(0,0);(0,3);(0,3);(0,0);(0,0);(0,4);(0,4);(0,4)]
             if (key == "ARRAY_WALLS"){
                 arr_walls = tempWalls;
                 num_walls = wall_count;
@@ -410,11 +411,13 @@ string Configuration::str() const {
     ss << "MAP_NUM_ROWS=" << map_num_rows << "\n";
     ss << "MAP_NUM_COLS=" << map_num_cols << "\n";
     ss << "MAX_NUM_MOVING_OBJECTS=" << max_num_moving_objects << "\n";
+    ss << "NUM_WALLS=" << num_walls << "\n";
     ss << "ARRAY_WALLS=[";
     for (int i = 0; arr_walls && i < num_walls; ++i) {
         ss << "(" << arr_walls[i].getRow() << "," << arr_walls[i].getCol() << ");";
     }
     ss << "]\n";
+    ss << "NUM_FAKE_WALLS=" << num_fake_walls << "\n";
     ss << "ARRAY_FAKE_WALLS=[";
     for (int i = 0; arr_fake_walls && i < num_fake_walls; ++i) {
         ss << "(" << arr_fake_walls[i].getRow() << "," << arr_fake_walls[i].getCol() << ");";
