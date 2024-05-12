@@ -248,9 +248,59 @@ public:
     ~Configuration();
     string str() const;
 };
-
-// Robot, BaseItem, BaseBag,...
-class Robot {};
+// Robot BaseItem BaseBag
+class Robot : public MovingObject {
+    RobotType type;
+    BaseItem * item;
+};
+//RobotC
+class RobotC : public Robot {
+private:
+    Criminal * criminal;
+public:
+    RobotC (int index , const Position & init_pos , Map * map , Criminal * criminal);
+    Position getNextPosition();
+    void move();
+    int getDistance(Sherlock * sherlock);
+    string str() const;
+};
+//RobotS
+class RobotS : public Robot {
+private:
+    Criminal * criminal;
+    Sherlock * sherlock;
+public:
+    RobotS ( int index , const Position & init_pos , Map * map , Criminal * criminal , Sherlock * sherlock ) ;
+    Position getNextPosition();
+    void move();
+    int getDistance(Watson * watson);
+    string str() const;
+};
+//RobotW
+class RobotW : public Robot {
+private:
+    Criminal * criminal;
+    Watson * watson;
+public:
+    RobotW ( int index , const Position & init_pos , Map * map , Criminal * criminal , Watson * watson ) ;
+    Position getNextPosition();
+    void move();
+    int getDistance(Sherlock * sherlock);
+    string str() const;
+};
+//RobotSW
+class RobotSW : public Robot {
+private:
+    Criminal * criminal;
+    Sherlock * sherlock;
+    Watson * watson;
+public:
+    RobotSW ( int index , const Position & init_pos , Map * map , Criminal * criminal , Sherlock * sherlock , Watson * watson ) ;
+    Position getNextPosition();
+    void move();
+    int getDistance();
+    string str() const;
+};
 class BaseItem {};
 class BaseBag {};
 class StudyPinkProgram {
