@@ -243,7 +243,6 @@ private:
     int num_steps;
 
 public:
-    //Constructor Configuration is declared as below. The constructor accepts filepath which is a string containing the path to the configuration file. The constructor initializes the attributes in accordance with the above descriptions.
     Configuration(const string & filepath);
     ~Configuration();
     string str() const;
@@ -301,7 +300,13 @@ public:
     int getDistance();
     string str() const;
 };
-class BaseItem {};
+class Character : public MovingObject {
+
+};
+//Baseitem is abstract class
+class BaseItem {
+
+};
 class BaseBag {};
 class StudyPinkProgram {
 private:
