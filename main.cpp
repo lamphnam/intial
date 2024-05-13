@@ -86,16 +86,16 @@ public:
         Criminal * criminal = new Criminal(0, Position(7, 9), map, sherlock, watson);
         criminal->move();
 
-      //  RobotC * robotC = new RobotC(3, Position(7,9), map, criminal);
+        RobotC * robotC = new RobotC(3, Position(7,9), map, criminal);
         cout << "Current position of Criminal: " << criminal->str() << endl;
         cout << "Criminal makes a move" << endl;
         criminal->move();
         cout << "New position of Criminal: " << criminal->str() << endl;
 
-       // cout << "Current position of robotC: " << robotC->str() << endl;
+        cout << "Current position of robotC: " << robotC->str() << endl;
         cout << "RobotC makes a move" << endl;
-      //  robotC->move();
-      //  cout << "New position of robotC: " << robotC->str() << endl;
+        robotC->move();
+        cout << "New position of robotC: " << robotC->str() << endl;
 
         delete sherlock;
         delete watson;
@@ -106,8 +106,8 @@ public:
 };
 
 int main(int argc, const char * argv[]) {
-    TestStudyInPink::satc_01();
+    //TestStudyInPink::satc_01();
     //TestStudyInPink::satc_02();
-    //TestStudyInPink::satc_03();
+    TestStudyInPink::satc_03();
     return 0;
 }

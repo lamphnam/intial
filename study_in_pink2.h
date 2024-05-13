@@ -251,9 +251,14 @@ public:
 class Robot : public MovingObject {
     RobotType type;
     BaseItem * item;
+
 };
 //RobotC
-class RobotC : public Robot {
+//RobotC * robotC = new RobotC(3, Position(7,9), map, criminal);
+/*
+object of abstract class type "RobotC" is not allowed:C/C++(322)
+main.cpp(89, 31): pure virtual function "MovingObject::getName" has no overrider*/
+class RobotC : public Robot :: MovingObject {
 private:
     Criminal * criminal;
 public:
@@ -262,6 +267,9 @@ public:
     void move();
     int getDistance(Sherlock * sherlock);
     string str() const;
+    virtual std::string getName() override {
+        return "RobotC";
+    }
 };
 //RobotS
 class RobotS : public Robot {
@@ -272,8 +280,8 @@ public:
     RobotS ( int index , const Position & init_pos , Map * map , Criminal * criminal , Sherlock * sherlock ) ;
     Position getNextPosition();
     void move();
-    int getDistance(Watson * watson);
-    string str() const;
+    int getDistance(Watson * watson) const;
+    string str(Watson* watson) const;
 };
 //RobotW
 class RobotW : public Robot {

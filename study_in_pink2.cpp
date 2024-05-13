@@ -180,6 +180,9 @@ void Sherlock::move() {
 string Sherlock :: str() const {
     return "Sherlock[index=" + to_string(index) + ";pos=" + pos.str() + ";moving_rule=" + moving_rule + "]";
 }
+Position Sherlock::getCurrentPosition(){
+    return pos;
+}
 // WATSON
 //    Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
 Watson :: Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp) : MovingObject(index, init_pos, map, "Waston"), moving_rule(moving_rule), hp(checkHP(init_hp)), exp(checkEXP(init_exp)) {
@@ -241,6 +244,9 @@ Position Watson::getNextPosition(){
 string Watson :: str() const {
     return "Watson[index=" + to_string(index) + ";pos=" + pos.str() + ";moving_rule=" + moving_rule + "]";
 }
+Position Watson::getCurrentPosition(){
+    return pos;
+}
 // con` 2 function move cua class sherlock va watson
 
 // CRIMINAL
@@ -286,7 +292,9 @@ string Criminal::getName(){
 string Criminal::str() const {
     return "Criminal[index=" + to_string(index) + ";pos=" + pos.str() + "]";
 }
-
+Position Criminal::getCurrentPosition(){
+    return pos;
+}
 //ARRAYMOVINGOBJECT
 
 ArrayMovingObject::ArrayMovingObject(int capacity) : capacity(capacity), count(0) {
@@ -462,6 +470,156 @@ string Configuration::str() const {
     ss << "]";
     return ss.str();
 }
+
+//RobotC
+/*
+//RobotC
+class RobotC : public Robot {
+private:
+    Criminal * criminal;
+public:
+    RobotC (int index , const Position & init_pos , Map * map , Criminal * criminal);
+    Position getNextPosition();
+    void move();
+    int getDistance(Sherlock * sherlock);
+    string str() const;
+};*/
+/*
+Method getNextPosition (public): For each type of robot, the moving rules are also
+different, specifically:
+• RobotC: Moves to the next location in the same location as the crimina*/
+//RobotC (int index , const Position & init_pos , Map * map , Criminal * criminal);
+RobotC::RobotC(int index, const Position & init_pos, Map * map, Criminal * criminal) : MovingObject(index, init_pos, map, "RobotC"), criminal(criminal) {
+
+}
+
+Position RobotC::getNextPosition() {
+    return criminal->getCurrentPosition();
+}
+void RobotC::move() {
+    Position nextPosition = getNextPosition();
+    if(map->isValid(nextPosition, this)) {
+        pos = nextPosition;
+    }
+}
+/*
+Method getDistance type C robots provide two methods to calculate the distance to Sherlock or to
+Watson based on an input parameter: pointer Sherlock* sherlock or Watson* watson.
+*/
+int RobotC::getDistance(Sherlock * sherlock) {
+    return abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) + abs(pos.getCol() - sherlock->getCurrentPosition().getCol());
+}
+//Robot[pos=<pos>;type=<robot_type>;dist=<dist>]
+//dist prints the distance to Sherlock, Watson or the sum of both depending on whether the robot is S, W or SW. If the robot type is RobotC, print an empty string.
+string RobotC::str() const {
+    return "Robot[" + pos.str() + ";type=C;dist=" "]"; //because type C => dist = empty string
+}
+//done RobotC
+
+//RobotS
+/*
+//RobotS
+class RobotS : public Robot {
+private:
+    Criminal * criminal;
+    Sherlock * sherlock;
+public:
+    RobotS ( int index , const Position & init_pos , Map * map , Criminal * criminal , Sherlock * sherlock ) ;
+    Position getNextPosition();
+    void move();
+    int getDistance(Watson * watson);
+    string str() const;
+};
+*/
+/*
+GetNextPosition method of RobotS
+RobotS: Move to the next location 1 unit away from the original and closest to
+Sherlock’s current location. Note that when we say the location is 1 unit away from
+the original location, the distance referred to is the Manhattan distance. If there are
+multiple nearest locations, the order of selection clockwise rotation, starting from
+the upwards direction, and selecting the first location
+*/
+Position RobotS::getNextPosition() {
+    Position current = getCurrentPosition();
+    //get position sherlock
+    Position Sherlock = sherlock->getCurrentPosition();
+
+    // Define the four possible next positions
+    Position up = Position(current.getRow() - 1, current.getCol());
+    Position right = Position(current.getRow(), current.getCol() + 1);
+    Position down = Position(current.getRow() + 1, current.getCol());
+    Position left = Position(current.getRow(), current.getCol() - 1);
+
+    // Calculate the Manhattan distance to each position
+    int distUp = abs(up.getRow() - Sherlock.getRow()) + abs(up.getCol() - Sherlock.getCol());
+    int distRight = abs(right.getRow() - Sherlock.getRow()) + abs(right.getCol() - Sherlock.getCol());
+    int distDown = abs(down.getRow() - Sherlock.getRow()) + abs(down.getCol() - Sherlock.getCol());
+    int distLeft = abs(left.getRow() - Sherlock.getRow()) + abs(left.getCol() - Sherlock.getCol());
+
+    // Find the position with the smallest distance
+    int minDist = distUp;
+    Position nextPos = up;
+    if (distRight < minDist) {
+        minDist = distRight;
+        nextPos = right;
+    }
+    if (distDown < minDist) {
+        minDist = distDown;
+        nextPos = down;
+    }
+    if (distLeft < minDist) {
+        minDist = distLeft;
+        nextPos = left;
+    }
+    return nextPos;
+}
+void RobotS::move() {
+    Position nextPosition = getNextPosition();
+    if(map->isValid(nextPosition, this)) {
+        pos = nextPosition;
+    }
+}
+/*
+Method getDistance (public): For robot types S, W or SW, this method returns the
+corresponding distance value of that robot object to Sherlock, Watson or the sum of both.
+*/
+int RobotS::getDistance(Watson * watson) const {
+    if (watson == nullptr) {
+        // Handle the case where watson is null
+        return -1; // or some appropriate error value
+    }
+    return abs(pos.getRow() - watson->getCurrentPosition().getRow()) + abs(pos.getCol() - watson->getCurrentPosition().getCol());
+}
+
+string RobotS::str(Watson* watson) const {
+    if (watson == nullptr) {
+        // Handle the case where watson is null
+        return "Robot[" + pos.str() + ";type=S;dist=Unknown]";
+    }
+    return "Robot[" + pos.str() + ";type=S;dist=" + to_string(getDistance(watson)) + "]";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // other member function definitions...
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER
