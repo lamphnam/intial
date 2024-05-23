@@ -51,6 +51,7 @@
         "cwchar": "cpp",
         "iomanip": "cpp",
         "new": "cpp",
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "climits": "cpp"
     }
 }

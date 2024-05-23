@@ -81,8 +81,10 @@ MovingObject::MovingObject(int index, const Position pos, Map * map, const strin
     }
 }
 
-MovingObject::~MovingObject() {}
-
+MovingObject :: ~MovingObject() {
+    delete map;
+    
+}
 
 Position::Position(int r, int c) : r(r), c(c) {}
 
@@ -123,30 +125,10 @@ Position MovingObject::getCurrentPosition() const {
 }
 // SHERLOCK
 //Sherlock(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
-Sherlock :: Sherlock(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp) : MovingObject(index, init_pos, map, "Sherlock"), moving_rule(moving_rule), hp(checkHP(init_hp)), exp(checkEXP(init_exp)) {
+Sherlock::Sherlock(int index, const std::string &moving_rule, const Position &init_pos, Map *map, int init_hp, int init_exp) 
+    : MovingObject(index, init_pos, map, "Sherlock"), moving_rule(moving_rule), hp(checkHP(init_hp)), exp(checkEXP(init_exp)), current_move_index(0) {}
 
-}
-Position Sherlock::getNextPosition(){
-    Position next_pos = pos;
-    for(int i = 0; i < moving_rule.length(); i++){
-        switch(moving_rule[i]){
-            case 'U':
-                next_pos.setRow(next_pos.getRow() - 1);
-                break;
-            case 'D':
-                next_pos.setRow(next_pos.getRow() + 1);
-                break;
-            case 'L':
-                next_pos.setCol(next_pos.getCol() - 1);
-                break;
-            case 'R':
-                next_pos.setCol(next_pos.getCol() + 1);
-                break;
-        }
-    }
-    return next_pos;
-}
-int Sherlock::checkHP(int init_hp){
+int Sherlock :: checkHP(int init_hp){
     if(init_hp < 0){
         init_hp = 0;
     }else if(init_hp > 500){
@@ -162,32 +144,62 @@ int Sherlock :: checkEXP(int init_exp){
     }
     return init_exp;
 }
-string Sherlock::getName(){
-    return "Sherlock";
-}
-int Sherlock::getExp(){
+
+int Sherlock::getExp()  {
     return exp;
 }
+
+Position Sherlock::getNextPosition() {
+    Position next_pos = pos;
+    if (!moving_rule.empty()) {
+        char move = moving_rule[current_move_index];
+        switch (move) {
+            case 'U':
+                next_pos.setRow(next_pos.getRow() + 1);
+                break;
+            case 'D':
+                next_pos.setRow(next_pos.getRow() - 1);
+                break;
+            case 'L':
+                next_pos.setCol(next_pos.getCol() - 1);
+                break;
+            case 'R':
+                next_pos.setCol(next_pos.getCol() + 1);
+                break;
+            default:
+                break;
+        }
+        // Update current_move_index for next call
+        current_move_index = (current_move_index + 1) % moving_rule.length();
+    }
+    return next_pos;
+}
+
 void Sherlock::move() {
     Position nextPosition = getNextPosition();
-    if(!nextPosition.isEqual(Position::npos)) {
+    if (!nextPosition.isEqual(Position::npos)) {
         pos = nextPosition;
     }
-    else 
-    {
-    }
+    // If the returned position is not valid, Sherlock stands still
 }
-string Sherlock :: str() const {
-    return "Sherlock[index=" + to_string(index) + ";pos=" + pos.str() + ";moving_rule=" + moving_rule + "]";
-}
-Position Sherlock::getCurrentPosition(){
+
+
+Position Sherlock::getCurrentPosition()  {
     return pos;
+}
+
+std::string Sherlock::getName()  {
+    return "Sherlock";
+}
+
+std::string Sherlock::str() const {
+    return "Sherlock[index=" + std::to_string(index) + ";pos=" + pos.str() + ";moving_rule=" + moving_rule + "]";
 }
 // WATSON
 //    Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
-Watson :: Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp) : MovingObject(index, init_pos, map, "Waston"), moving_rule(moving_rule), hp(checkHP(init_hp)), exp(checkEXP(init_exp)) {
+Watson::Watson(int index, const std::string &moving_rule, const Position &init_pos, Map *map, int init_hp, int init_exp) 
+    : MovingObject(index, init_pos, map, "Watson"), moving_rule(moving_rule), hp(checkHP(init_hp)), exp(checkEXP(init_exp)), current_move_index(0) {}
 
-}
 int Watson :: checkHP(int init_hp){
     if(init_hp < 0){
         init_hp = 0;
@@ -204,32 +216,24 @@ int Watson :: checkEXP(int init_exp){
     }
     return init_exp;
 }
-int Watson::getExp(){
+int Watson::getExp() {
     return exp;
 }
-string Watson::getName(){
+
+std::string Watson::getName() {
     return "Watson";
 }
-void Watson::move() {
-    // Call getNextPosition to get the next position
-    Position nextPosition = getNextPosition();
-    // Check if the next position is valid (assuming npos is defined somewhere)
-    if(!nextPosition.isEqual(Position::npos)) {
-        // If it's a valid move, update the position
-        pos = nextPosition;
-    } else {
-        // If it's not a valid move, do nothing
-    }
-}
-Position Watson::getNextPosition(){
+
+Position Watson :: getNextPosition(){
     Position next_pos = pos;
-    for(int i = 0; i < moving_rule.length(); i++){
-        switch(moving_rule[i]){
+    if (!moving_rule.empty()) {
+        char move = moving_rule[current_move_index];
+        switch (move) {
             case 'U':
-                next_pos.setRow(next_pos.getRow() - 1);
+                next_pos.setRow(next_pos.getRow() + 1);
                 break;
             case 'D':
-                next_pos.setRow(next_pos.getRow() + 1);
+                next_pos.setRow(next_pos.getRow() - 1);
                 break;
             case 'L':
                 next_pos.setCol(next_pos.getCol() - 1);
@@ -237,14 +241,25 @@ Position Watson::getNextPosition(){
             case 'R':
                 next_pos.setCol(next_pos.getCol() + 1);
                 break;
+            default:
+                break;
         }
+        // Update current_move_index for next call
+        current_move_index = (current_move_index + 1) % moving_rule.length();
     }
     return next_pos;
 }
-string Watson :: str() const {
-    return "Watson[index=" + to_string(index) + ";pos=" + pos.str() + ";moving_rule=" + moving_rule + "]";
+void Watson::move() {
+    Position nextPosition = getNextPosition();
+    if (!nextPosition.isEqual(Position::npos)) {
+        pos = nextPosition;
+    }
 }
-Position Watson::getCurrentPosition(){
+std::string Watson::str() const {
+    return "Watson[index=" + std::to_string(index) + ";pos=" + pos.str() + ";moving_rule=" + moving_rule + "]";
+}
+
+Position Watson::getCurrentPosition() {
     return pos;
 }
 // con` 2 function move cua class sherlock va watson
@@ -295,10 +310,29 @@ string Criminal::str() const {
 Position Criminal::getCurrentPosition(){
     return pos;
 }
-//ARRAYMOVINGOBJECT
+//destruce criminal
 
-ArrayMovingObject::ArrayMovingObject(int capacity) : capacity(capacity), count(0) {
+
+//ARRAYMOVINGOBJECT
+/*
+class ArrayMovingObject {
+private:
+    MovingObject ** arr_mv_objs;
+    int count;
+    int capacity;
+public:
+    ArrayMovingObject(int capacity);
+    ~ArrayMovingObject() ;
+    bool isFull() const;
+    bool add(MovingObject * mv_obj);
+    MovingObject * get(int index) const;
+    int size() const; 
+    string str() const;
+};*/
+ArrayMovingObject::ArrayMovingObject(int capacity){
     arr_mv_objs = new MovingObject*[capacity];
+    count = 0;
+    this->capacity = capacity;
 }
 ArrayMovingObject::~ArrayMovingObject(){
     for(int i = 0; i < count; i++){
@@ -312,6 +346,9 @@ bool ArrayMovingObject::isFull() const {
     }
     return false;
 }
+/* The add method adds a new move object to the end of the array if the array is
+not full, then returns true. Otherwise, the method will not add a new object and
+returns false.*/
 bool ArrayMovingObject::add(MovingObject * mv_obj){
     if(isFull()){
         return false;
@@ -320,22 +357,14 @@ bool ArrayMovingObject::add(MovingObject * mv_obj){
     count++;
     return true;
 }
-MovingObject * ArrayMovingObject::get(int index) const {
-    if(index < 0 || index >= count){
-        return nullptr;
-    }
-    return arr_mv_objs[index];
-}
-string ArrayMovingObject::str() const{
-    string str = "ArrayMovingObject [ count =" + to_string(count) + "; capacity =" + to_string(capacity) + ";";
+string ArrayMovingObject::str() const {
+    stringstream ss;
+    ss << "Array[count=" << count << ";capacity=" << capacity << ";";
     for(int i = 0; i < count; i++){
-        str += arr_mv_objs[i]->str();
-        if(i != count - 1){
-            str += ";";
-        }
+        ss << arr_mv_objs[i]->str() << ";";
     }
-    str += "]";
-    return str;
+    ss << "]";
+    return ss.str();
 }
 //CONFIGURATION
 

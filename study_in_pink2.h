@@ -139,11 +139,13 @@ public:
     int checkHP(int init_hp);
     int checkEXP(int init_exp);
     int getExp();
+    int current_move_index;
+    void move();
     Position getNextPosition();
     Position getCurrentPosition();
     string getName();
     // move
-    void move();
+
 
     // str
     string str() const;
@@ -156,6 +158,7 @@ private:
     int init_exp;
     Map * map;
     string moving_rule;
+
     int hp;
     int exp;
 
@@ -163,12 +166,14 @@ public:
     Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
     int checkHP(int init_hp);
     int checkEXP(int init_exp);
+    int current_move_index;
     int getExp();
+    void move();
     Position getNextPosition();
     Position getCurrentPosition();
     string getName();
     // move
-    void move();
+    
     // str
     string str() const;
     // ...
@@ -202,20 +207,16 @@ public:
 
 class ArrayMovingObject {
 private:
-    // TODO
-    //arr_mv_objs: array of moving objects (MovingObject). Each element in the array needs to demonstrate polymorphism
     MovingObject ** arr_mv_objs;
     int count;
     int capacity;
 public:
-    //Constructor of ArrayMovingObject takes a parameter to initialize the capacity property. At the same time, the method needs to be allocated appropriately.
     ArrayMovingObject(int capacity);
-
     ~ArrayMovingObject() ;
     bool isFull() const;
     bool add(MovingObject * mv_obj);
     MovingObject * get(int index) const;
-    int size() const; // return current number of elements in the array
+    int size() const; 
     string str() const;
 };
 
